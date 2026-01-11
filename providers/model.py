@@ -38,8 +38,3 @@ def openai_call() -> list[str]:
         print(response.output_text)
         output.append(response.output_text)
     return output
-
-openai_call()
-
-
-
