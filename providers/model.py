@@ -6,7 +6,8 @@ import json
 
 load_dotenv()
 
-def get_news()->str:
+
+def get_news() -> str:
     articles = ""
 
     folder = Path("data/games")
@@ -16,7 +17,8 @@ def get_news()->str:
             articles += contents
     return articles
 
-def get_questions()->list[str]:
+
+def get_questions() -> list[str]:
     questions = []
     with open("data/tests/tests.json", "r", encoding="utf-8") as f:
         data = json.load(f)
@@ -33,7 +35,7 @@ def openai_call() -> list[str]:
     for question in questions:
         response = client.responses.create(
             model="gpt-5-nano",
-            input=f"Answer the question concisely in 1 - 2 sentences with the following information sources:{news}\n\nQuestion: {question}"
+            input=f"Answer the question concisely in 1 - 2 sentences with the following information sources:{news}\n\nQuestion: {question}",
         )
         print(response.output_text)
         output.append(response.output_text)
