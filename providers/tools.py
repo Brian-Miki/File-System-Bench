@@ -1,11 +1,16 @@
 import subprocess
+from pathlib import Path
 
 
-def grep_file(pattern: str, path: str, context_lines: int = 3):
+BASE_DIR = Path(__file__).resolve().parent.parent
+DATA_GAMES_DIR = BASE_DIR / "data" / "games"
+
+
+def grep_file(pattern: str, context_lines: int = 3):
     cmd = [
         "rg",
         pattern,
-        path,
+        str(DATA_GAMES_DIR),
         "--context",
         str(context_lines),
         "--no-heading",
@@ -21,4 +26,25 @@ def grep_file(pattern: str, path: str, context_lines: int = 3):
     }
 
 
-grep_file(pattern="Tiger", path="data/games/Game-1-AL-Wildcard.txt", context_lines=2)
+print(grep_file(pattern="Tiger", context_lines=2))
+
+
+def tool_description() -> list[dict]:
+    tools = [
+        {
+            "type": "function",
+            "name": "grep_file",
+            "description": "Look for pattern in file.",
+            "parameters": {
+                "type": "object",
+                "properties": {
+                    "pattern": {
+                        "type": "string",
+                        "description": "A string pattern you are looking for",
+                    },
+                },
+                "required": ["pattern"],
+            },
+        },
+    ]
+    return tools
