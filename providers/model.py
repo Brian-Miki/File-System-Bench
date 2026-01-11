@@ -25,14 +25,21 @@ def get_questions()->list[str]:
     return questions
 
 
-def openai_call() -> str:
+def openai_call() -> list[str]:
     client = OpenAI(api_key=os.getenv("OPENAI_API_KEY"))
+    questions = get_questions()
+    news = get_news()
+    output = []
+    for question in questions:
+        response = client.responses.create(
+            model="gpt-5-nano",
+            input=f"Answer the question concisely in 1 - 2 sentences with the following information sources:{news}\n\nQuestion: {question}"
+        )
+        print(response.output_text)
+        output.append(response.output_text)
+    return output
 
-    response = client.responses.create(
-        model="gpt-5-nano",
-        input="Write a one-sentence bedtime story about a unicorn."
-    )
+openai_call()
 
-    return response.output_text
 
 
