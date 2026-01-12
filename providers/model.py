@@ -1,5 +1,3 @@
-from openai import OpenAI
-import os
 from dotenv import load_dotenv
 from data_loader import get_questions, get_news, get_summaries
 from tools import grep_file, tool_description
@@ -46,7 +44,6 @@ def agent_openai_call() -> list[str]:
                 info = grep_file(pattern=args["pattern"])
                 print(args["pattern"])
 
-                # Provide function call results to the model
                 input_list.append(
                     {
                         "type": "function_call_output",
