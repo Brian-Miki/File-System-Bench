@@ -26,25 +26,32 @@ def grep_file(pattern: str, context_lines: int = 3):
     }
 
 
-print(grep_file(pattern="Tiger", context_lines=2))
-
-
 def tool_description() -> list[dict]:
-    tools = [
+    return [
         {
             "type": "function",
             "name": "grep_file",
-            "description": "Look for pattern in file.",
+            "description": (
+                "Search the game text files for specific evidence related to the question. "
+                "Use this tool to look up concrete names, events, statistics, or phrases that are "
+                "likely to appear verbatim in the source text. "
+                "Prefer distinctive keywords (e.g., full player names, teams, or unique events) "
+                "rather than generic terms. Do not use this tool for speculation or summarization."
+            ),
             "parameters": {
                 "type": "object",
                 "properties": {
                     "pattern": {
                         "type": "string",
-                        "description": "A string pattern you are looking for",
+                        "description": (
+                            "A specific keyword or short phrase to search for in the text. "
+                            "This should usually be a proper noun (e.g., a player name), "
+                            "a team name, or a distinctive phrase that is likely to appear exactly "
+                            "in the source files."
+                        ),
                     },
                 },
                 "required": ["pattern"],
             },
-        },
+        }
     ]
-    return tools

@@ -13,6 +13,12 @@ def get_news() -> str:
     return articles
 
 
+def get_summaries() -> str:
+    with open("data/combined_news.txt", "r", encoding="utf-8") as f:
+        text = f.read()
+    return text
+
+
 def get_questions() -> list[str]:
     questions = []
     with open("data/tests/tests.json", "r", encoding="utf-8") as f:
