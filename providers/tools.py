@@ -25,6 +25,9 @@ def grep_file(pattern: str, path: str = str(DATA_GAMES_DIR),context_lines: int =
         "exit_code": result.returncode,
     }
 
+def research_complete() -> str:
+    return f"The research is complete. Answer the question based on the research provided in 1 sentence."    
+
 
 def tool_description() -> list[dict]:
     return [
@@ -32,11 +35,10 @@ def tool_description() -> list[dict]:
             "type": "function",
             "name": "grep_file",
             "description": (
-                "Search the game text files for specific evidence related to the question. "
-                "Use this tool to look up concrete names, events, statistics, or phrases that are "
-                "likely to appear verbatim in the source text. "
-                "Prefer distinctive keywords (e.g., full player names, teams, or unique events) "
-                "rather than generic terms. Do not use this tool for speculation or summarization."
+                "Search the game text files for concrete evidence related to the question. "
+                "Use this tool to look up names, events, statistics, or exact phrases "
+                "that are likely to not appear verbatim in the source text."
+                "Avoid patterns and paths already used as the contents in the files does not change."
             ),
             "parameters": {
                 "type": "object",
@@ -44,22 +46,31 @@ def tool_description() -> list[dict]:
                     "pattern": {
                         "type": "string",
                         "description": (
-                            "A short phrase to search for in the text. "
-                            "This should usually be a proper noun (e.g., a players first name), "
-                            "a team name, or a distinctive phrase that is likely to appear exactly "
-                            "in the source files."
-                            "Make sure to keep things fairly generic to get as much context as needed."
+                            "A distinctive keyword or short phrase to search for "
+                            "(e.g., player name, team name, or unique event)."
                         ),
                     },
                     "path": {
                         "type": "string",
                         "description": (
-                            "The specific path to the file the search is required for."
-                            "The path should exactly match the one shared in the summarized information information given."
+                            "Optional file or directory path to search. "
+                            "If omitted, the default games directory is used."
                         ),
                     },
                 },
                 "required": ["pattern"],
             },
-        }
+        },
+        {
+            "type": "function",
+            "name": "research_complete",
+            "description": (
+                "Call this once sufficient evidence has been gathered and no further "
+                "search is needed."
+            ),
+            "parameters": {
+                "type": "object",
+                "properties": {},
+            },
+        },
     ]

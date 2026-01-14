@@ -1,6 +1,6 @@
 from dotenv import load_dotenv
 from data_loader import get_questions, get_news, get_summaries
-from tools import grep_file, tool_description
+from tools import grep_file, tool_description, research_complete
 from openai_client import get_openai_client
 import json
 
@@ -25,7 +25,7 @@ def agent_openai_call() -> list[str]:
                         {
                             "type": "input_text",
                             "text": (
-                                "Answer the question concisely in 1–2 sentences using the following information sources and the related GREP tool call. You MUST send off various calls to ensure all information and context is stored.\n"
+                                "Answer the question concisely in 1–2 sentences using the following information sources and the related GREP tool call. Don't do over 5 function calls. It is better to share your answer once you are fairly certain it is correct.\n"
                                 f"Summaries: {summaries}\n\nQuestion: {question}"
                             ),
                         }
@@ -33,37 +33,57 @@ def agent_openai_call() -> list[str]:
                 }
             ]
 
-            response = client.responses.create(
-                model="gpt-5-nano",
-                tools=tools,
-                input=input_list,
-                reasoning={"effort": "minimal"},
-            )
+            research_done = False
+            counter = 0
             f.write(f"Question: {question}\n")
-            input_list += response.output
-            for item in response.output:
-                if item.type == "function_call" and item.name == "grep_file":
-                    args = json.loads(item.arguments)
 
-                    info = grep_file(pattern=args["pattern"])
-                    print(args["pattern"])
-                    print(args["path"])
 
-                    f.write(f"Tool Call Pattern: {args['pattern']}\n")
-                    f.write(f"Tool Call Path: {args['path']}\n")
-                    f.write(f"Tool Call Summary: {info}\n")
+            while(research_done == False):
 
-                    input_list.append(
-                        {
+                response = client.responses.create(
+                    model="gpt-5-nano",
+                    tools=tools,
+                    tool_choice="required",
+                    input=input_list,
+                    reasoning={"effort": "minimal"},
+                )
+                input_list += response.output
+                for item in response.output:
+                    if item.type == "function_call" and item.name == "grep_file":
+                        args = json.loads(item.arguments)
+
+                        info = grep_file(pattern=args["pattern"])
+                        print(args["pattern"])
+                        print(args["path"])
+
+                        f.write(f"Tool Call Pattern: {args['pattern']}\n")
+                        f.write(f"Tool Call Path: {args['path']}\n")
+                        f.write(f"Tool Call Summary: {info}\n")
+
+                        input_list.append(
+                            {
+                                "type": "function_call_output",
+                                "call_id": item.call_id,
+                                "output": json.dumps({"summary": info}),
+                            }
+                        )
+                    elif item.type == "function_call" and item.name == "research_complete":
+                        info = research_complete()
+                        input_list.append({
                             "type": "function_call_output",
                             "call_id": item.call_id,
-                            "output": json.dumps({"summary": info}),
-                        }
-                    )
+                            "output": json.dumps({"Final instruction": info}),
+                        })
+                        research_done = True
+                        break
+                        
+                    else:
+                        counter += 1
+                        if counter == 4:
+                            research_done = True
 
             response = client.responses.create(
                 model="gpt-5-nano",
-                tools=tools,
                 input=input_list,
                 reasoning={"effort": "low"},
             )
