@@ -6,7 +6,7 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 DATA_GAMES_DIR = BASE_DIR / "data" / "games"
 
 
-def grep_file(pattern: str, path: str = str(DATA_GAMES_DIR), context_lines: int = 3):
+def grep_file(pattern: str, path: str = str(DATA_GAMES_DIR), context_lines: int = 5):
     cmd = [
         "rg",
         pattern,

@@ -113,5 +113,5 @@ def oneshot_openai_call() -> list[str]:
     return output
 
 
-# print(oneshot_openai_call())
+print(oneshot_openai_call())
 print(agent_openai_call())
