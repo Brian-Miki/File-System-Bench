@@ -9,60 +9,67 @@ load_dotenv()
 
 
 def agent_openai_call() -> list[str]:
-    tools = tool_description()
-    questions = get_questions()
-    summaries = get_summaries()
-    output = []
-    client = get_openai_client()
+    with open("logs.txt", "a",encoding='utf-8') as f:
+        tools = tool_description()
+        questions = get_questions()
+        summaries = get_summaries()
+        output = []
+        client = get_openai_client()
+        f.write(f"Summary: {summaries}")
 
-    for question in questions:
-        input_list = [
-            {
-                "role": "user",
-                "content": [
-                    {
-                        "type": "input_text",
-                        "text": (
-                            "Answer the question concisely in 1–2 sentences using the following information sources and the related GREP tool call. We reccomend sending off various calls to ensure all information and context is stored.\n"
-                            f"Summaries: {summaries}\n\nQuestion: {question}"
-                        ),
-                    }
-                ],
-            }
-        ]
+        for question in questions:
+            input_list = [
+                {
+                    "role": "user",
+                    "content": [
+                        {
+                            "type": "input_text",
+                            "text": (
+                                "Answer the question concisely in 1–2 sentences using the following information sources and the related GREP tool call. You MUST send off various calls to ensure all information and context is stored.\n"
+                                f"Summaries: {summaries}\n\nQuestion: {question}"
+                            ),
+                        }
+                    ],
+                }
+            ]
 
-        response = client.responses.create(
-            model="gpt-5-nano",
-            tools=tools,
-            input=input_list,
-            reasoning={"effort": "minimal"},
-        )
-        input_list += response.output
-        for item in response.output:
-            if item.type == "function_call" and item.name == "grep_file":
-                args = json.loads(item.arguments)
+            response = client.responses.create(
+                model="gpt-5-nano",
+                tools=tools,
+                input=input_list,
+                reasoning={"effort": "minimal"},
+            )
+            f.write(f"Question: {question}\n")
+            input_list += response.output
+            for item in response.output:
+                if item.type == "function_call" and item.name == "grep_file":
+                    args = json.loads(item.arguments)
 
-                info = grep_file(pattern=args["pattern"])
+                    info = grep_file(pattern=args["pattern"])
+                    print(args["pattern"])
+                    print(args["path"])
 
-                summary = summary_creator(question, info)
-                print(f"Summary: {summary}")
+                    f.write(f"Tool Call Pattern: {args['pattern']}\n")
+                    f.write(f"Tool Call Path: {args['path']}\n")
+                    f.write(f"Tool Call Summary: {info}\n")
 
-                input_list.append(
-                    {
-                        "type": "function_call_output",
-                        "call_id": item.call_id,
-                        "output": json.dumps({"summary": summary}),
-                    }
-                )
+                    input_list.append(
+                        {
+                            "type": "function_call_output",
+                            "call_id": item.call_id,
+                            "output": json.dumps({"summary": info}),
+                        }
+                    )
 
-        response = client.responses.create(
-            model="gpt-5-nano",
-            tools=tools,
-            input=input_list,
-            reasoning={"effort": "minimal"},
-        )
-        output.append(response.output_text)
-        print(f"Final answer:{response.output_text}")
+            response = client.responses.create(
+                model="gpt-5-nano",
+                tools=tools,
+                input=input_list,
+                reasoning={"effort": "low"},
+            )
+            output.append(response.output_text)
+            print(f"Final answer:{response.output_text}")
+            f.write(f"Final response: {response.output_text}\n\n\n")
 
     return output
 
@@ -77,18 +84,10 @@ def oneshot_openai_call()->list[str]:
             model="gpt-5-nano",
             input="Answer the question concisely in 1 sentences using the following information sources.\n"
                             f"News: {news}\n\nQuestion: {question}",
-            reasoning={"effort": "minimal"},
+            reasoning={"effort": "low"},
         )
         output.append(response.output_text)
     return output
-
-def summary_creator(question:str, information:str)->str:
-    client = get_openai_client()
-    response = client.responses.create(
-        model="gpt-5-nano",
-        input=f"Summarize and share and important content related to question: {question} based on information: {information}.\n\nIf there is no important information directly state \"NO RELEVANT INFORMATION FOUND\" Create summaries that are 1 - 2 sentences long MAX."
-    )
-    return response.output_text
 
 
 # print(oneshot_openai_call())

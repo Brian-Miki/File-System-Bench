@@ -6,11 +6,11 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 DATA_GAMES_DIR = BASE_DIR / "data" / "games"
 
 
-def grep_file(pattern: str, context_lines: int = 3):
+def grep_file(pattern: str, path: str = str(DATA_GAMES_DIR),context_lines: int = 3):
     cmd = [
         "rg",
         pattern,
-        str(DATA_GAMES_DIR),
+        path,
         "--context",
         str(context_lines),
         "--no-heading",
@@ -44,10 +44,18 @@ def tool_description() -> list[dict]:
                     "pattern": {
                         "type": "string",
                         "description": (
-                            "A specific keyword or short phrase to search for in the text. "
-                            "This should usually be a proper noun (e.g., a player name), "
+                            "A short phrase to search for in the text. "
+                            "This should usually be a proper noun (e.g., a players first name), "
                             "a team name, or a distinctive phrase that is likely to appear exactly "
                             "in the source files."
+                            "Make sure to keep things fairly generic to get as much context as needed."
+                        ),
+                    },
+                    "path": {
+                        "type": "string",
+                        "description": (
+                            "The specific path to the file the search is required for."
+                            "The path should exactly match the one shared in the summarized information information given."
                         ),
                     },
                 },
