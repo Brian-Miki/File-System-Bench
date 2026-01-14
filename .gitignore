@@ -2,3 +2,4 @@
 .env
 plans
 data/combined_news.txt
+logs.txt
