@@ -1,0 +1,141 @@
+Title: Red Sox jump Yankees' bullpen to win Game 1 of Wild Card Series
+
+FILE_PATH: /Users/bmiki/Documents/Projects/LLM-research-bench/data/games/Game-1-AL-Wildcard-2.txt
+Title: Tarik Skubal's 14 strikeouts propel Tigers past Guardians in Game 1 of AL Wild Card Series
+
+FILE_PATH: /Users/bmiki/Documents/Projects/LLM-research-bench/data/games/Game-1-AL-Wildcard.txt
+Title: Blue Jays' bats go quiet in Game 1 loss to Mariners
+
+FILE_PATH: /Users/bmiki/Documents/Projects/LLM-research-bench/data/games/Game-1-ALCS.txt
+Title: Vladdy rises to moment in Toronto's 1st postseason win since '16
+
+FILE_PATH: /Users/bmiki/Documents/Projects/LLM-research-bench/data/games/Game-1-ALDS-2.txt
+Title: Tigers seize control of ALDS in 11-inning opener, with ace in the hole
+
+FILE_PATH: /Users/bmiki/Documents/Projects/LLM-research-bench/data/games/Game-1-ALDS.txt
+Title: Padres bats go silent in Wild Card Playoff Game 1 loss to the Cubs
+
+FILE_PATH: /Users/bmiki/Documents/Projects/LLM-research-bench/data/games/Game-1-NL-Wildcard-2.txt
+Title: Homer barrage sinks Reds in Wild Card Game 1 loss
+
+FILE_PATH: /Users/bmiki/Documents/Projects/LLM-research-bench/data/games/Game-1-NL-Wildcard.txt
+Title: Brewers make layoff pay off with blazing fast start in Game 1 romp
+
+FILE_PATH: /Users/bmiki/Documents/Projects/LLM-research-bench/data/games/Game-1-NLCS-2.txt
+Title: Dodgers survive Brewers' rally after Blake Snell domination in NLCS opener
+
+FILE_PATH: /Users/bmiki/Documents/Projects/LLM-research-bench/data/games/Game-1-NLCS.txt
+Title: Strahm 'gut punched' by backbreaking HR in Phils' Game 1 loss
+
+FILE_PATH: /Users/bmiki/Documents/Projects/LLM-research-bench/data/games/Game-1-NLDS.txt
+Title: Historic Game 1 goes exactly according to plan as Blue Jays dominate Dodgers 11-4
+
+FILE_PATH: /Users/bmiki/Documents/Projects/LLM-research-bench/data/games/Game-1-WS.txt
+Title: Yanks force win-or-go-home Game 3 thanks to Jazz's epic race home
+
+FILE_PATH: /Users/bmiki/Documents/Projects/LLM-research-bench/data/games/Game-2-AL-Wildcard-2.txt
+
+
+FILE_PATH: /Users/bmiki/Documents/Projects/LLM-research-bench/data/games/Game-2-AL-Wildcard.txt
+Title: Blue Jays' margin for error narrows after blowout loss to Mariners
+
+FILE_PATH: /Users/bmiki/Documents/Projects/LLM-research-bench/data/games/Game-2-ALCS.txt
+Title: Carved up by rookie, Yanks head to Bronx expecting to turn the tide
+
+FILE_PATH: /Users/bmiki/Documents/Projects/LLM-research-bench/data/games/Game-2-ALDS-2.txt
+Title: Tigers embracing series split despite missed opportunity in G2 loss
+
+FILE_PATH: /Users/bmiki/Documents/Projects/LLM-research-bench/data/games/Game-2-ALDS.txt
+Title: Machado and Miller star as Padres beat Cubs to tie Wild Card series
+
+FILE_PATH: /Users/bmiki/Documents/Projects/LLM-research-bench/data/games/Game-2-NL-Wildcard-2.txt
+Title: Reds' resilience falls short as season ends in Wild Card Series
+
+FILE_PATH: /Users/bmiki/Documents/Projects/LLM-research-bench/data/games/Game-2-NL-Wildcard.txt
+Title: Kickin’ it old school with dominant starters, LA heads home up 2-0
+
+FILE_PATH: /Users/bmiki/Documents/Projects/LLM-research-bench/data/games/Game-2-NLCS.txt
+Title: Brewers tap into power reserves, drub Cubs for 2-0 NLDS lead
+
+FILE_PATH: /Users/bmiki/Documents/Projects/LLM-research-bench/data/games/Game-2-NLDS-2.txt
+Title: Dodgers BARELY survive Phils' 9th-inning rally to take 2-0 NLDS lead
+
+FILE_PATH: /Users/bmiki/Documents/Projects/LLM-research-bench/data/games/Game-2-NLDS.txt
+Title: Yamamoto’s gem, pair of solo shots carry Dodgers in Game 2
+
+FILE_PATH: /Users/bmiki/Documents/Projects/LLM-research-bench/data/games/Game-2-WS.txt
+Title: Yankees shut out Red Sox in Game 3 of Wild Card Series, advance to ALDS
+
+FILE_PATH: /Users/bmiki/Documents/Projects/LLM-research-bench/data/games/Game-3-AL-Wildcard-2.txt
+Title: Tigers get last laugh over Guardians, clinch return trip to ALDS
+
+FILE_PATH: /Users/bmiki/Documents/Projects/LLM-research-bench/data/games/Game-3-AL-Wildcard.txt
+Title: Blue Jays swing their way back into ALCS with commanding Game 3 win
+
+FILE_PATH: /Users/bmiki/Documents/Projects/LLM-research-bench/data/games/Game-3-ALCS.txt
+Title: Judge seizes moment, delivers electrifying HR as Yanks rally for stunning Game 3 win
+
+FILE_PATH: /Users/bmiki/Documents/Projects/LLM-research-bench/data/games/Game-3-ALDS-2.txt
+Tigers on brink of elimination after late rally falls short in G3
+
+FILE_PATH: /Users/bmiki/Documents/Projects/LLM-research-bench/data/games/Game-3-ALDS.txt
+Title Padres' sturdy bullpen never gets a lead to protect in playoff ouster
+
+FILE_PATH: /Users/bmiki/Documents/Projects/LLM-research-bench/data/games/Game-3-NL-Wildcard-2.txt
+Title: Dodgers take 3-0 series edge by beating Brewers at their own game
+
+FILE_PATH: /Users/bmiki/Documents/Projects/LLM-research-bench/data/games/Game-3-NLCS.txt
+Title: Cubs use big first inning to beat Brewers in Game 3, avoid NLDS sweep
+
+FILE_PATH: /Users/bmiki/Documents/Projects/LLM-research-bench/data/games/Game-3-NLDS-2.txt
+Title: Schwarber's pair of HRs (including 455-footer!) ignites Phillies’ NLDS Game 3 win
+
+FILE_PATH: /Users/bmiki/Documents/Projects/LLM-research-bench/data/games/Game-3-NLDS.txt
+Title: Blue Jays drop 18-inning heartbreaker to Dodgers in Game 3 of World Series
+
+FILE_PATH: /Users/bmiki/Documents/Projects/LLM-research-bench/data/games/Game-3-WS.txt
+Title: Gritty Blue Jays unfazed on the road, tie up ALCS vs. Mariners
+
+FILE_PATH: /Users/bmiki/Documents/Projects/LLM-research-bench/data/games/Game-4-ALCS.txt
+Title: Blue Jays use collective effort to eliminate Yankees, advance to ALCS
+
+FILE_PATH: /Users/bmiki/Documents/Projects/LLM-research-bench/data/games/Game-4-ALDS-2.txt
+Title: ALDS tied, Mariners vow to 'get back up and fight' in Game 5
+
+FILE_PATH: /Users/bmiki/Documents/Projects/LLM-research-bench/data/games/Game-4-ALDS.txt
+Title: Crew's magical year ends in NLCS at hands of Dodgers, Ohtani
+
+FILE_PATH: /Users/bmiki/Documents/Projects/LLM-research-bench/data/games/Game-4-NLCS.txt
+Title: Boyd regroups at Wrigley as Cubs blank Crew to force Game 5
+
+FILE_PATH: /Users/bmiki/Documents/Projects/LLM-research-bench/data/games/Game-4-NLDS-2.txt
+Title: Dodgers eliminate Phillies in Game 4
+
+FILE_PATH: /Users/bmiki/Documents/Projects/LLM-research-bench/data/games/Game-4-NLDS.txt
+Title: Comeback kids: Jays get to Ohtani, Dodgers' bullpen to even up Fall Classic
+
+FILE_PATH: /Users/bmiki/Documents/Projects/LLM-research-bench/data/games/Game-4-WS.txt
+Title: Blue Jays unravel in eighth inning as Mariners seize ALCS lead
+
+FILE_PATH: /Users/bmiki/Documents/Projects/LLM-research-bench/data/games/Game-5-ALCS.txt
+Title: Tigers' season ends after marathon 15-inning heartbreaker in Game 5
+
+FILE_PATH: /Users/bmiki/Documents/Projects/LLM-research-bench/data/games/Game-5-ALDS.txt
+Title: Brewers conquer hurdle, win 1st postseason series since '18 to advance to NLCS
+
+FILE_PATH: /Users/bmiki/Documents/Projects/LLM-research-bench/data/games/Game-5-NLDS-2.txt
+Title: With the World his stage, rookie puts Blue Jays on cusp of title
+
+FILE_PATH: /Users/bmiki/Documents/Projects/LLM-research-bench/data/games/Game-5-WS.txt
+Title: Pair of homers, defense propel Blue Jays to Game 7 clash with Mariners
+
+FILE_PATH: /Users/bmiki/Documents/Projects/LLM-research-bench/data/games/Game-6-ALCS.txt
+Title: L.A. Dodgers force World Series decider after defeating Blue Jays 3-1 in Game 6
+
+FILE_PATH: /Users/bmiki/Documents/Projects/LLM-research-bench/data/games/Game-6-WS.txt
+Title: Blue Jays advance to World Series with Game 7 win over Mariners
+
+FILE_PATH: /Users/bmiki/Documents/Projects/LLM-research-bench/data/games/Game-7-ALCS.txt
+Title: Blue Jays lose heartbreaker in Game 7 of World Series as Dodgers complete epic comeback
+
+FILE_PATH: /Users/bmiki/Documents/Projects/LLM-research-bench/data/games/Game-7-WS.txt

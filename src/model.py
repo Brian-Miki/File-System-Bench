@@ -15,7 +15,7 @@ def agent_openai_call() -> list[str]:
         summaries = get_summaries()
         output = []
         client = get_openai_client()
-        f.write(f"Summary: {summaries}")
+        # f.write(f"Summary: {summaries}")
 
         for question in questions:
             input_list = [
@@ -51,12 +51,12 @@ def agent_openai_call() -> list[str]:
                         args = json.loads(item.arguments)
 
                         info = grep_file(pattern=args["pattern"])
-                        print(args["pattern"])
-                        print(args["path"])
+                        # print(args["pattern"])
+                        # print(args["path"])
 
-                        f.write(f"Tool Call Pattern: {args['pattern']}\n")
-                        f.write(f"Tool Call Path: {args['path']}\n")
-                        f.write(f"Tool Call Summary: {info}\n")
+                        # f.write(f"Tool Call Pattern: {args['pattern']}\n")
+                        # f.write(f"Tool Call Path: {args['path']}\n")
+                        # f.write(f"Tool Call Summary: {info}\n")
 
                         input_list.append(
                             {
@@ -95,7 +95,7 @@ def agent_openai_call() -> list[str]:
 
                     else:
                         counter += 1
-                        if counter == 4:
+                        if counter == 10:
                             research_done = True
 
             response = client.responses.create(
@@ -104,7 +104,7 @@ def agent_openai_call() -> list[str]:
                 reasoning={"effort": "low"},
             )
             output.append(response.output_text)
-            print(f"Final answer:{response.output_text}")
+            # print(f"Final answer:{response.output_text}")
             f.write(f"Final response: {response.output_text}\n\n\n")
 
     return output

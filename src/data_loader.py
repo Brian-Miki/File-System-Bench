@@ -14,7 +14,7 @@ def get_news() -> str:
 
 
 def get_summaries() -> str:
-    with open("data/combined_news.txt", "r", encoding="utf-8") as f:
+    with open("data/summary/combined_news.txt", "r", encoding="utf-8") as f:
         text = f.read()
     return text
 
