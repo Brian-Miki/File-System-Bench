@@ -6,7 +6,7 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 DATA_GAMES_DIR = BASE_DIR / "data" / "games"
 
 
-def grep_file(pattern: str, path: str = str(DATA_GAMES_DIR),context_lines: int = 3):
+def grep_file(pattern: str, path: str = str(DATA_GAMES_DIR), context_lines: int = 3):
     cmd = [
         "rg",
         pattern,
@@ -25,8 +25,9 @@ def grep_file(pattern: str, path: str = str(DATA_GAMES_DIR),context_lines: int =
         "exit_code": result.returncode,
     }
 
+
 def research_complete() -> str:
-    return f"The research is complete. Answer the question based on the research provided in 1 sentence."    
+    return f"The research is complete. Answer the question based on the research provided in 1 sentence."
 
 
 def tool_description() -> list[dict]:

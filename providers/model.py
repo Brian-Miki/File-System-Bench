@@ -9,7 +9,7 @@ load_dotenv()
 
 
 def agent_openai_call() -> list[str]:
-    with open("logs.txt", "a",encoding='utf-8') as f:
+    with open("logs.txt", "a", encoding="utf-8") as f:
         tools = tool_description()
         questions = get_questions()
         summaries = get_summaries()
@@ -37,9 +37,7 @@ def agent_openai_call() -> list[str]:
             counter = 0
             f.write(f"Question: {question}\n")
 
-
-            while(research_done == False):
-
+            while research_done == False:
                 response = client.responses.create(
                     model="gpt-5-nano",
                     tools=tools,
@@ -67,16 +65,21 @@ def agent_openai_call() -> list[str]:
                                 "output": json.dumps({"summary": info}),
                             }
                         )
-                    elif item.type == "function_call" and item.name == "research_complete":
+                    elif (
+                        item.type == "function_call"
+                        and item.name == "research_complete"
+                    ):
                         info = research_complete()
-                        input_list.append({
-                            "type": "function_call_output",
-                            "call_id": item.call_id,
-                            "output": json.dumps({"Final instruction": info}),
-                        })
+                        input_list.append(
+                            {
+                                "type": "function_call_output",
+                                "call_id": item.call_id,
+                                "output": json.dumps({"Final instruction": info}),
+                            }
+                        )
                         research_done = True
                         break
-                        
+
                     else:
                         counter += 1
                         if counter == 4:
@@ -94,7 +97,7 @@ def agent_openai_call() -> list[str]:
     return output
 
 
-def oneshot_openai_call()->list[str]:
+def oneshot_openai_call() -> list[str]:
     output = []
     questions = get_questions()
     news = get_news()
@@ -103,7 +106,7 @@ def oneshot_openai_call()->list[str]:
         response = client.responses.create(
             model="gpt-5-nano",
             input="Answer the question concisely in 1 sentences using the following information sources.\n"
-                            f"News: {news}\n\nQuestion: {question}",
+            f"News: {news}\n\nQuestion: {question}",
             reasoning={"effort": "low"},
         )
         output.append(response.output_text)
