@@ -6,7 +6,7 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 DATA_GAMES_DIR = BASE_DIR / "data" / "games"
 
 
-def grep_file(pattern: str, path: str = str(DATA_GAMES_DIR), context_lines: int = 5):
+def grep_file(pattern: str, path: str = str(DATA_GAMES_DIR), context_lines: int = 3):
     cmd = [
         "rg",
         pattern,
@@ -23,6 +23,17 @@ def grep_file(pattern: str, path: str = str(DATA_GAMES_DIR), context_lines: int 
         "stdout": result.stdout[:8000],
         "stderr": result.stderr,
         "exit_code": result.returncode,
+    }
+
+
+def cat_file(path: str):
+    with open(path, "r", encoding="utf-8") as f:
+        content = f.read()
+
+    return {
+        "stdout": content,
+        "stderr": "",
+        "exit_code": 0,
     }
 
 
@@ -72,6 +83,28 @@ def tool_description() -> list[dict]:
             "parameters": {
                 "type": "object",
                 "properties": {},
+            },
+        },
+        {
+            "type": "function",
+            "name": "cat_file",
+            "description": (
+                "Read and return the full contents of a specified text file. "
+                "Use this tool when complete file context is required for understanding "
+                "or summarization. The file should be text-based."
+            ),
+            "parameters": {
+                "type": "object",
+                "properties": {
+                    "path": {
+                        "type": "string",
+                        "description": (
+                            "The full path to the file to read. "
+                            "The path must refer to an existing text file."
+                        ),
+                    }
+                },
+                "required": ["path"],
             },
         },
     ]
