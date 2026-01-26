@@ -7,12 +7,8 @@ DATA_GAMES_DIR = BASE_DIR / "data" / "games"
 
 
 def grep_file(pattern: str, path: str = str(DATA_GAMES_DIR), context_lines: int = 3):
-    if "\x00" in pattern:
-        return {
-            "stdout": "",
-            "stderr": "Invalid pattern: contains null byte (\\x00).",
-            "exit_code": 1,
-        }
+ 
+    cleaned_pattern = pattern.replace("\x00", "")
 
     if not Path(path).exists():
         return {
@@ -23,7 +19,7 @@ def grep_file(pattern: str, path: str = str(DATA_GAMES_DIR), context_lines: int 
     
     cmd = [
         "rg",
-        pattern,
+        cleaned_pattern,
         path,
         "--context",
         str(context_lines),
