@@ -9,13 +9,12 @@ load_dotenv()
 
 
 def agent_openai_call() -> list[str]:
-    with open("logs.txt", "a", encoding="utf-8") as f:
+    with open("logs/logs.txt", "a", encoding="utf-8") as f:
         tools = tool_description()
         questions = get_questions()
         summaries = get_summaries()
         output = []
-        client = get_openai_client()
-        # f.write(f"Summary: {summaries}")
+        client = get_openai_client() 
 
         for question in questions:
             input_list = [
@@ -37,7 +36,7 @@ def agent_openai_call() -> list[str]:
             counter = 0
             f.write(f"Question: {question}\n")
 
-            while research_done == False:
+            while research_done == False and counter < 10:
                 response = client.responses.create(
                     model="gpt-5-nano",
                     tools=tools,
@@ -51,12 +50,6 @@ def agent_openai_call() -> list[str]:
                         args = json.loads(item.arguments)
 
                         info = grep_file(pattern=args["pattern"])
-                        # print(args["pattern"])
-                        # print(args["path"])
-
-                        # f.write(f"Tool Call Pattern: {args['pattern']}\n")
-                        # f.write(f"Tool Call Path: {args['path']}\n")
-                        # f.write(f"Tool Call Summary: {info}\n")
 
                         input_list.append(
                             {
@@ -78,10 +71,7 @@ def agent_openai_call() -> list[str]:
                             }
                         )
 
-                    elif (
-                        item.type == "function_call"
-                        and item.name == "research_complete"
-                    ):
+                    elif item.type == "function_call" and item.name == "research_complete":
                         info = research_complete()
                         input_list.append(
                             {
@@ -91,12 +81,9 @@ def agent_openai_call() -> list[str]:
                             }
                         )
                         research_done = True
-                        break
 
                     else:
                         counter += 1
-                        if counter == 10:
-                            research_done = True
 
             response = client.responses.create(
                 model="gpt-5-nano",
@@ -104,7 +91,6 @@ def agent_openai_call() -> list[str]:
                 reasoning={"effort": "low"},
             )
             output.append(response.output_text)
-            # print(f"Final answer:{response.output_text}")
             f.write(f"Final response: {response.output_text}\n\n\n")
 
     return output
@@ -126,5 +112,5 @@ def oneshot_openai_call() -> list[str]:
     return output
 
 
-# print(oneshot_openai_call())
-print(agent_openai_call())
+print(oneshot_openai_call())
+# print(agent_openai_call())
