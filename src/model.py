@@ -9,7 +9,7 @@ load_dotenv()
 
 
 def agent_openai_call() -> list[str]:
-    with open("logs/logs.txt", "a", encoding="utf-8") as f:
+    with open("logs/logs_agent.txt", "a", encoding="utf-8") as f:
         tools = tool_description()
         questions = get_questions()
         summaries = get_summaries()
@@ -104,16 +104,20 @@ def oneshot_openai_call() -> list[str]:
     questions = get_questions()
     news = get_news()
     client = get_openai_client()
-    for question in questions:
-        response = client.responses.create(
-            model="gpt-5-nano",
-            input="Answer the question concisely in 1 sentences using the following information sources.\n"
-            f"News: {news}\n\nQuestion: {question}",
-            reasoning={"effort": "low"},
-        )
-        output.append(response.output_text)
+    with open("logs/logs_oneshot.txt", "a", encoding="utf-8") as f:
+        for question in questions:
+            response = client.responses.create(
+                model="gpt-5-nano",
+                input="Answer the question concisely in 1 sentences using the following information sources.\n"
+                f"News: {news}\n\nQuestion: {question}",
+                reasoning={"effort": "low"},
+            )
+            output.append(response.output_text)
+            f.write(f"Question: {question}\n")
+            f.write(f"Final response: {response.output_text}\n\n\n")
+
     return output
 
 
-# print(oneshot_openai_call())
-print(agent_openai_call())
+print(oneshot_openai_call())
+#print(agent_openai_call())
