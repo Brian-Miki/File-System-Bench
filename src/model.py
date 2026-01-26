@@ -14,7 +14,7 @@ def agent_openai_call() -> list[str]:
         questions = get_questions()
         summaries = get_summaries()
         output = []
-        client = get_openai_client() 
+        client = get_openai_client()
 
         for question in questions:
             input_list = [
@@ -71,7 +71,10 @@ def agent_openai_call() -> list[str]:
                             }
                         )
 
-                    elif item.type == "function_call" and item.name == "research_complete":
+                    elif (
+                        item.type == "function_call"
+                        and item.name == "research_complete"
+                    ):
                         info = research_complete()
                         input_list.append(
                             {

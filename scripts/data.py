@@ -15,10 +15,11 @@ def get_news() -> None:
                     out.write(line)
                     out.write("\nFILE_PATH: " + str(file_path) + "\n")
         for file_path in sorted(DATA_OFF_SZN_DIR.iterdir()):
-                if file_path.is_file():
-                    with file_path.open("r", encoding="utf-8") as f:
-                        line = f.readline()
-                        out.write(line)
-                        out.write("\nFILE_PATH: " + str(file_path) + "\n")
+            if file_path.is_file():
+                with file_path.open("r", encoding="utf-8") as f:
+                    line = f.readline()
+                    out.write(line)
+                    out.write("\nFILE_PATH: " + str(file_path) + "\n")
+
 
 get_news()
