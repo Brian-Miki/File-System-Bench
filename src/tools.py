@@ -7,6 +7,20 @@ DATA_GAMES_DIR = BASE_DIR / "data" / "games"
 
 
 def grep_file(pattern: str, path: str = str(DATA_GAMES_DIR), context_lines: int = 3):
+    if "\x00" in pattern:
+        return {
+            "stdout": "",
+            "stderr": "Invalid pattern: contains null byte (\\x00).",
+            "exit_code": 1,
+        }
+
+    if not Path(path).exists():
+        return {
+            "stdout": "",
+            "stderr": f"Invalid path: '{path}' does not exist.",
+            "exit_code": 1,
+        }
+    
     cmd = [
         "rg",
         pattern,
@@ -27,6 +41,13 @@ def grep_file(pattern: str, path: str = str(DATA_GAMES_DIR), context_lines: int 
 
 
 def cat_file(path: str):
+    if not Path(path).exists():
+        return {
+            "stdout": "",
+            "stderr": f"Invalid path: '{path}' does not exist.",
+            "exit_code": 1,
+        }
+    
     with open(path, "r", encoding="utf-8") as f:
         content = f.read()
 

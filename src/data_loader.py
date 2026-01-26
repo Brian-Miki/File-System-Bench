@@ -10,11 +10,16 @@ def get_news() -> str:
         with file_path.open("r", encoding="utf-8") as f:
             contents = f.read()
             articles += contents
+    folder = Path("data/off-season")
+    for file_path in folder.iterdir():
+        with file_path.open("r", encoding="utf-8") as f:
+            contents = f.read()
+            articles += contents
     return articles
 
 
 def get_summaries() -> str:
-    with open("data/summary/combined_news.txt", "r", encoding="utf-8") as f:
+    with open("data/combined_news.txt", "r", encoding="utf-8") as f:
         text = f.read()
     return text
 
