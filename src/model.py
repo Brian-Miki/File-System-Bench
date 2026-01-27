@@ -114,7 +114,7 @@ def oneshot_openai_call() -> list[str]:
             )
             output.append(response.output_text)
             f.write(f"{response}\n")
-            
+
             f.write(f"Question: {question}\n")
             f.write(f"Final response: {response.output_text}\n\n\n")
 
@@ -122,4 +122,4 @@ def oneshot_openai_call() -> list[str]:
 
 
 print(oneshot_openai_call())
-#print(agent_openai_call())
+# print(agent_openai_call())
