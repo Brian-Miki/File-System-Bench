@@ -113,6 +113,8 @@ def oneshot_openai_call() -> list[str]:
                 reasoning={"effort": "low"},
             )
             output.append(response.output_text)
+            f.write(f"{response}\n")
+            
             f.write(f"Question: {question}\n")
             f.write(f"Final response: {response.output_text}\n\n\n")
 
