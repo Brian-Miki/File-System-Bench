@@ -31,3 +31,11 @@ def get_questions() -> list[str]:
         for question in data["questions_and_answers"]:
             questions.append(question["question"])
     return questions
+
+def get_answers() -> list[str]:
+    questions = []
+    with open("data/tests/tests.json", "r", encoding="utf-8") as f:
+        data = json.load(f)
+        for question in data["questions_and_answers"]:
+            questions.append(question["answer"])
+    return questions
