@@ -1,0 +1,5 @@
+1) Refactor to JSON - Done
+2) Add in new "correct answer context"
+3) Set up Async OpenAI
+4) Create LLM as a judge with Async OpenAI
+5) Move other functions over to Async format

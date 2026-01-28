@@ -1,5 +1,5 @@
 from dotenv import load_dotenv
-from data_loader import get_questions, get_news, get_summaries
+from data_loader import get_questions, get_news, get_summaries, get_answers
 from tools import grep_file, tool_description, research_complete, cat_file
 from openai_client import get_openai_client
 import json
@@ -13,9 +13,10 @@ def agent_openai_call() -> list[str]:
     tools = tool_description()
     questions = get_questions()
     summaries = get_summaries()
+    answers = get_answers()
     buffer = []
     client = get_openai_client()
-    for question in questions:
+    for i, question in enumerate(questions):
         input_list = [
             {
                 "role": "system",
@@ -139,7 +140,7 @@ def agent_openai_call() -> list[str]:
             input=input_list,
             reasoning={"effort": "low"},
         )
-        record = {"question": f"{question}", "response": f"{response.output_text}"}
+        record = {"question": f"{question}", "response": f"{response.output_text}", "answer": f"{answers[i]}"}
         buffer.append(json.dumps(record, ensure_ascii=False))
     with open(f"logs/agent/logs_agent_{current_time}.json", "a", encoding="utf-8") as f:
         f.write("\n".join(buffer) + "\n")
@@ -151,9 +152,10 @@ def oneshot_openai_call():
     questions = get_questions()
     news = get_news()
     client = get_openai_client()
+    answers = get_answers()
     buffer = []
 
-    for question in questions:
+    for i, question in enumerate(questions):
         response = client.responses.create(
             model="gpt-5-nano",
             input="Answer the question concisely in 1 sentences using the following information sources.\n"
@@ -161,7 +163,7 @@ def oneshot_openai_call():
             reasoning={"effort": "low"},
         )
 
-        record = {"question": f"{question}", "response": f"{response.output_text}"}
+        record = {"question": f"{question}", "response": f"{response.output_text}", "answer": f"{answers[i]}"}
 
         buffer.append(json.dumps(record, ensure_ascii=False))
     with open(
@@ -172,5 +174,5 @@ def oneshot_openai_call():
     return
 
 
-# oneshot_openai_call()
-print(agent_openai_call())
+#oneshot_openai_call()
+agent_openai_call()
