@@ -140,7 +140,7 @@ def agent_openai_call() -> list[str]:
             input=input_list,
             reasoning={"effort": "low"},
         )
-        record = {"question": f"{question}", "response": f"{response.output_text}", "answer": f"{answers[i]}"}
+        record = {"question": f"{question}", "ai_response": f"{response.output_text}", "correct_answer": f"{answers[i]}"}
         buffer.append(json.dumps(record, ensure_ascii=False))
     with open(f"logs/agent/logs_agent_{current_time}.json", "a", encoding="utf-8") as f:
         f.write("\n".join(buffer) + "\n")
@@ -163,7 +163,7 @@ def oneshot_openai_call():
             reasoning={"effort": "low"},
         )
 
-        record = {"question": f"{question}", "response": f"{response.output_text}", "answer": f"{answers[i]}"}
+        record = {"question": f"{question}", "ai_response": f"{response.output_text}", "correct_answer": f"{answers[i]}"}
 
         buffer.append(json.dumps(record, ensure_ascii=False))
     with open(
