@@ -18,23 +18,57 @@ def agent_openai_call() -> list[str]:
     for question in questions:
         input_list = [
             {
+                "role": "system",
+                "content": [
+                    {
+                        "type": "input_text",
+                        "text": (
+                            "You are an autonomous research agent operating over a local file system. "
+                            "You have access to tools that allow you to search file contents and read files. "
+                            "Your goal is to gather only the minimum necessary evidence needed to answer the user's question accurately.\n\n"
+                            "Rules:\n"
+                            "- Use tools deliberately and efficiently\n"
+                            "- Do not exceed 5 total tool calls\n"
+                            "- Prefer targeted keyword searches over broad scans\n"
+                            "- When you are confident you have enough information, call research_complete\n"
+                            "- Do NOT answer the question until explicitly instructed to do so\n"
+                        ),
+                    }
+                ],
+            },
+            {
                 "role": "user",
                 "content": [
                     {
                         "type": "input_text",
                         "text": (
-                            "Answer the question concisely in 1–2 sentences using the following information sources and the related GREP and CAT tool calls. Don't do over 5 function calls. It is better to share your answer once you are fairly certain it is correct.\n"
-                            f"Summaries: {summaries}\n\nQuestion: {question}"
+                            "<instructions>\n"
+                            "Search the provided files to gather evidence needed to answer the question.\n"
+                            "You must determine relevant keywords yourself; the answer may not appear verbatim.\n"
+                            "Use GREP to locate candidate files and CAT to read specific files.\n"
+                            "Stop searching once sufficient evidence is found.\n"
+                            "</instructions>\n\n"
+                            "<constraints>\n"
+                            "- Maximum of 5 tool calls total\n"
+                            "- Use precise keyword searches\n"
+                            "- Do NOT answer the question yet\n"
+                            "</constraints>\n\n"
+                            "<context>\n"
+                            f"{summaries}\n"
+                            "</context>\n\n"
+                            "<question>\n"
+                            f"{question}\n"
+                            "</question>"
                         ),
                     }
                 ],
-            }
+            },
         ]
 
         research_done = False
         counter = 0
 
-        while research_done == False and counter < 10:
+        while research_done is False and counter < 10:
             response = client.responses.create(
                 model="gpt-5-nano",
                 tools=tools,
@@ -83,6 +117,23 @@ def agent_openai_call() -> list[str]:
                 else:
                     counter += 1
 
+        input_list.append(
+            {
+                "role": "system",
+                "content": [
+                    {
+                        "type": "input_text",
+                        "text": (
+                            "You are now switching from RESEARCH MODE to ANSWER MODE.\n"
+                            "Your task is to produce a final answer using only the evidence already gathered.\n"
+                            "Do not mention tools, searches, or file names unless necessary for clarity.\n"
+                            "Do not speculate or add new information.\n"
+                        ),
+                    }
+                ],
+            }
+        )
+
         response = client.responses.create(
             model="gpt-5-nano",
             input=input_list,
@@ -90,9 +141,7 @@ def agent_openai_call() -> list[str]:
         )
         record = {"question": f"{question}", "response": f"{response.output_text}"}
         buffer.append(json.dumps(record, ensure_ascii=False))
-    with open(
-        f"logs/agent/logs_agent_{current_time}.json", "a", encoding="utf-8"
-    ) as f:
+    with open(f"logs/agent/logs_agent_{current_time}.json", "a", encoding="utf-8") as f:
         f.write("\n".join(buffer) + "\n")
 
     return
