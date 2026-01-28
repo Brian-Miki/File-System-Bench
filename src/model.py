@@ -3,13 +3,14 @@ from data_loader import get_questions, get_news, get_summaries
 from tools import grep_file, tool_description, research_complete, cat_file
 from openai_client import get_openai_client
 import json
+import time
 
-
+current_time = time.ctime()
 load_dotenv()
 
 
 def agent_openai_call() -> list[str]:
-    with open("logs/logs_agent.txt", "a", encoding="utf-8") as f:
+    with open(f"logs/agent/logs_agent_{current_time}.txt", "a", encoding="utf-8") as f:
         tools = tool_description()
         questions = get_questions()
         summaries = get_summaries()
@@ -104,7 +105,7 @@ def oneshot_openai_call() -> list[str]:
     questions = get_questions()
     news = get_news()
     client = get_openai_client()
-    with open("logs/logs_oneshot.txt", "a", encoding="utf-8") as f:
+    with open(f"logs/oneshot/logs_oneshot_{current_time}.txt", "a", encoding="utf-8") as f:
         for question in questions:
             response = client.responses.create(
                 model="gpt-5-nano",
@@ -113,7 +114,6 @@ def oneshot_openai_call() -> list[str]:
                 reasoning={"effort": "low"},
             )
             output.append(response.output_text)
-            f.write(f"{response}\n")
 
             f.write(f"Question: {question}\n")
             f.write(f"Final response: {response.output_text}\n\n\n")
