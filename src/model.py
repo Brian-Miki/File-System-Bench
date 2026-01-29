@@ -6,7 +6,6 @@ import json
 import time
 import asyncio
 from pathlib import Path
-from typing import Any
 
 current_time = time.ctime()
 load_dotenv()
@@ -20,16 +19,16 @@ def agent_openai_call() -> str:
             references to the correct answers.
     """
 
-    tools: list[dict[str, Any]] = tool_description()
-    questions: list[str] = get_questions()
-    summaries: str = get_summaries()
-    answers: list[str] = get_answers()
-    buffer: list[str] = []
+    tools = tool_description()
+    questions= get_questions()
+    summaries = get_summaries()
+    answers = get_answers()
+    buffer = []
     client = get_openai_client()
     log_path = f"logs/agent/logs_agent_{current_time}.json"
 
     for i, question in enumerate(questions):
-        input_list: list[dict[str, Any]] = [
+        input_list = [
             {
                 "role": "system",
                 "content": [
@@ -78,11 +77,11 @@ def agent_openai_call() -> str:
             },
         ]
 
-        research_done: bool = False
-        counter: int = 0
+        research_done = False
+        counter = 0
 
         while research_done is False and counter < 10:
-            response: Any = client.responses.create(
+            response = client.responses.create(
                 model="gpt-5-nano",
                 tools=tools,
                 tool_choice="required",
@@ -92,9 +91,9 @@ def agent_openai_call() -> str:
             input_list += response.output
             for item in response.output:
                 if item.type == "function_call" and item.name == "grep_file":
-                    args: dict[str, Any] = json.loads(item.arguments)
+                    args = json.loads(item.arguments)
 
-                    info: dict[str, Any] = grep_file(pattern=args["pattern"])
+                    info = grep_file(pattern=args["pattern"])
 
                     input_list.append(
                         {
@@ -104,7 +103,7 @@ def agent_openai_call() -> str:
                         }
                     )
                 elif item.type == "function_call" and item.name == "cat_file":
-                    args: dict[str, Any] = json.loads(item.arguments)
+                    args = json.loads(item.arguments)
 
                     info = cat_file(path=args["path"])
 
@@ -117,7 +116,7 @@ def agent_openai_call() -> str:
                     )
 
                 elif item.type == "function_call" and item.name == "research_complete":
-                    info: str = research_complete()
+                    info = research_complete()
                     input_list.append(
                         {
                             "type": "function_call_output",
@@ -152,7 +151,7 @@ def agent_openai_call() -> str:
             input=input_list,
             reasoning={"effort": "low"},
         )
-        record: dict[str, str] = {
+        record = {
             "question": f"{question}",
             "ai_response": f"{response.output_text}",
             "correct_answer": f"{answers[i]}",

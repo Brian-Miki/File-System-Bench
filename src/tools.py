@@ -54,7 +54,7 @@ def cat_file(path: str):
 
 
 def research_complete() -> str:
-    return f"The research is complete. Answer the question based on the research provided in 1 sentence."
+    return "The research is complete. Answer the question based on the research provided in 1 sentence."
 
 
 def tool_description() -> list[dict]:
