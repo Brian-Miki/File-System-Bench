@@ -181,11 +181,12 @@ def oneshot_openai_call():
     ) as f:
         f.write("\n".join(buffer) + "\n")
 
-    return
+    return f"logs/oneshot/logs_oneshot_{current_time}.json"
 
 
 async def llm_as_a_judge(path: str):
     client = get_async_openai_client()
+    print(f"Completing scoring for: {path}")
     with open(Path(path), "r", encoding="utf-8") as f:
         for line in f:
             record = json.loads(line)
@@ -211,8 +212,8 @@ async def llm_as_a_judge(path: str):
                                 "type": "input_text",
                                 "text": (
                                     f"<question>{record['question']}</question>\n"
-                                    f"<response>{record['response']}</response>\n"
-                                    f"<correct_answer>{record['answer']}</correct_answer>"
+                                    f"<response>{record['ai_response']}</response>\n"
+                                    f"<correct_answer>{record['correct_answer']}</correct_answer>"
                                 ),
                             }
                         ],
@@ -220,10 +221,14 @@ async def llm_as_a_judge(path: str):
                 ],
                 reasoning={"effort": "low"},
             )
+            print(f"Question: {record['question']}")
+            print(f"Guess: {record['ai_response']}")
+            print(f"Answer: {record['correct_answer']}")
             print(response.output_text)
-    return
+            print("--------------------")
+    return path
 
 
-# oneshot_openai_call()
+path = oneshot_openai_call()
 # agent_openai_call()
-asyncio.run(llm_as_a_judge("logs/agent/logs_agent_Wed Jan 28 15:41:23 2026.json"))
+asyncio.run(llm_as_a_judge(path))
