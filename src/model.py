@@ -6,20 +6,30 @@ import json
 import time
 import asyncio
 from pathlib import Path
+from typing import Any
 
 current_time = time.ctime()
 load_dotenv()
 
 
-def agent_openai_call() -> list[str]:
-    tools = tool_description()
-    questions = get_questions()
-    summaries = get_summaries()
-    answers = get_answers()
-    buffer = []
+def agent_openai_call() -> str:
+    """Execute the multi-tool research workflow for each question.
+
+    Returns:
+        str: Filesystem path to the log containing the agent responses and
+            references to the correct answers.
+    """
+
+    tools: list[dict[str, Any]] = tool_description()
+    questions: list[str] = get_questions()
+    summaries: str = get_summaries()
+    answers: list[str] = get_answers()
+    buffer: list[str] = []
     client = get_openai_client()
+    log_path = f"logs/agent/logs_agent_{current_time}.json"
+
     for i, question in enumerate(questions):
-        input_list = [
+        input_list: list[dict[str, Any]] = [
             {
                 "role": "system",
                 "content": [
@@ -68,11 +78,11 @@ def agent_openai_call() -> list[str]:
             },
         ]
 
-        research_done = False
-        counter = 0
+        research_done: bool = False
+        counter: int = 0
 
         while research_done is False and counter < 10:
-            response = client.responses.create(
+            response: Any = client.responses.create(
                 model="gpt-5-nano",
                 tools=tools,
                 tool_choice="required",
@@ -82,9 +92,9 @@ def agent_openai_call() -> list[str]:
             input_list += response.output
             for item in response.output:
                 if item.type == "function_call" and item.name == "grep_file":
-                    args = json.loads(item.arguments)
+                    args: dict[str, Any] = json.loads(item.arguments)
 
-                    info = grep_file(pattern=args["pattern"])
+                    info: dict[str, Any] = grep_file(pattern=args["pattern"])
 
                     input_list.append(
                         {
@@ -94,7 +104,7 @@ def agent_openai_call() -> list[str]:
                         }
                     )
                 elif item.type == "function_call" and item.name == "cat_file":
-                    args = json.loads(item.arguments)
+                    args: dict[str, Any] = json.loads(item.arguments)
 
                     info = cat_file(path=args["path"])
 
@@ -107,7 +117,7 @@ def agent_openai_call() -> list[str]:
                     )
 
                 elif item.type == "function_call" and item.name == "research_complete":
-                    info = research_complete()
+                    info: str = research_complete()
                     input_list.append(
                         {
                             "type": "function_call_output",
@@ -142,19 +152,25 @@ def agent_openai_call() -> list[str]:
             input=input_list,
             reasoning={"effort": "low"},
         )
-        record = {
+        record: dict[str, str] = {
             "question": f"{question}",
             "ai_response": f"{response.output_text}",
             "correct_answer": f"{answers[i]}",
         }
         buffer.append(json.dumps(record, ensure_ascii=False))
-    with open(f"logs/agent/logs_agent_{current_time}.json", "a", encoding="utf-8") as f:
+    with open(log_path, "a", encoding="utf-8") as f:
         f.write("\n".join(buffer) + "\n")
 
-    return
+    return log_path
 
 
-def oneshot_openai_call():
+def oneshot_openai_call() -> str:
+    """Answer every question in a single model call using the news digest.
+
+    Returns:
+        str: Filesystem path to the log capturing each question, generated
+            answer, and ground-truth response.
+    """
     questions = get_questions()
     news = get_news()
     client = get_openai_client()
@@ -184,7 +200,17 @@ def oneshot_openai_call():
     return f"logs/oneshot/logs_oneshot_{current_time}.json"
 
 
-async def llm_as_a_judge(path: str):
+async def llm_as_a_judge(path: str) -> str:
+    """Grade each model response stored in a log file.
+
+    Args:
+        path (str): Path to a newline-delimited JSON log produced by one of the
+            run modes where every line contains the question, the model answer,
+            and the correct answer.
+
+    Returns:
+        str: Echo of ``path`` so callers can chain or log the evaluated file.
+    """
     client = get_async_openai_client()
     print(f"Completing scoring for: {path}")
     with open(Path(path), "r", encoding="utf-8") as f:
@@ -229,6 +255,6 @@ async def llm_as_a_judge(path: str):
     return path
 
 
-path = oneshot_openai_call()
-# agent_openai_call()
+#path = oneshot_openai_call()
+path = agent_openai_call()
 asyncio.run(llm_as_a_judge(path))
