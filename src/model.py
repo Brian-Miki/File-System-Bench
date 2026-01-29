@@ -1,9 +1,11 @@
 from dotenv import load_dotenv
 from data_loader import get_questions, get_news, get_summaries, get_answers
 from tools import grep_file, tool_description, research_complete, cat_file
-from openai_client import get_openai_client
+from openai_client import get_openai_client, get_async_openai_client
 import json
 import time
+import asyncio
+from pathlib import Path
 
 current_time = time.ctime()
 load_dotenv()
@@ -140,7 +142,11 @@ def agent_openai_call() -> list[str]:
             input=input_list,
             reasoning={"effort": "low"},
         )
-        record = {"question": f"{question}", "ai_response": f"{response.output_text}", "correct_answer": f"{answers[i]}"}
+        record = {
+            "question": f"{question}",
+            "ai_response": f"{response.output_text}",
+            "correct_answer": f"{answers[i]}",
+        }
         buffer.append(json.dumps(record, ensure_ascii=False))
     with open(f"logs/agent/logs_agent_{current_time}.json", "a", encoding="utf-8") as f:
         f.write("\n".join(buffer) + "\n")
@@ -163,7 +169,11 @@ def oneshot_openai_call():
             reasoning={"effort": "low"},
         )
 
-        record = {"question": f"{question}", "ai_response": f"{response.output_text}", "correct_answer": f"{answers[i]}"}
+        record = {
+            "question": f"{question}",
+            "ai_response": f"{response.output_text}",
+            "correct_answer": f"{answers[i]}",
+        }
 
         buffer.append(json.dumps(record, ensure_ascii=False))
     with open(
@@ -174,5 +184,46 @@ def oneshot_openai_call():
     return
 
 
-#oneshot_openai_call()
-agent_openai_call()
+async def llm_as_a_judge(path: str):
+    client = get_async_openai_client()
+    with open(Path(path), "r", encoding="utf-8") as f:
+        for line in f:
+            record = json.loads(line)
+            response = await client.responses.create(
+                model="gpt-5-nano",
+                input=[
+                    {
+                        "role": "system",
+                        "content": [
+                            {
+                                "type": "input_text",
+                                "text": (
+                                    "You are an expert grader. "
+                                    "Only respond with either 'Correct' or 'Incorrect'."
+                                ),
+                            }
+                        ],
+                    },
+                    {
+                        "role": "user",
+                        "content": [
+                            {
+                                "type": "input_text",
+                                "text": (
+                                    f"<question>{record['question']}</question>\n"
+                                    f"<response>{record['response']}</response>\n"
+                                    f"<correct_answer>{record['answer']}</correct_answer>"
+                                ),
+                            }
+                        ],
+                    },
+                ],
+                reasoning={"effort": "low"},
+            )
+            print(response.output_text)
+    return
+
+
+# oneshot_openai_call()
+# agent_openai_call()
+asyncio.run(llm_as_a_judge("logs/agent/logs_agent_Wed Jan 28 15:41:23 2026.json"))

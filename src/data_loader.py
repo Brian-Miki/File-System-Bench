@@ -32,6 +32,7 @@ def get_questions() -> list[str]:
             questions.append(question["question"])
     return questions
 
+
 def get_answers() -> list[str]:
     questions = []
     with open("data/tests/tests.json", "r", encoding="utf-8") as f:
