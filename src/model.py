@@ -82,11 +82,11 @@ def agent_openai_call() -> str:
 
         while research_done is False and counter < 10:
             response = client.responses.create(
-                model="gpt-5-nano",
+                model="gpt-4.1-nano-2025-04-14",
                 tools=tools,
                 tool_choice="required",
                 input=input_list,
-                reasoning={"effort": "minimal"},
+                #reasoning={"effort": "minimal"},
             )
             input_list += response.output
             for item in response.output:
@@ -147,9 +147,9 @@ def agent_openai_call() -> str:
         )
 
         response = client.responses.create(
-            model="gpt-5-nano",
+            model="gpt-4.1-nano-2025-04-14",
             input=input_list,
-            reasoning={"effort": "low"},
+            #reasoning={"effort": "minimal"},
         )
         record = {
             "question": f"{question}",
@@ -178,10 +178,10 @@ def oneshot_openai_call() -> str:
 
     for i, question in enumerate(questions):
         response = client.responses.create(
-            model="gpt-5-nano",
+            model="gpt-4.1-nano-2025-04-14",
             input="Answer the question concisely in 1 sentences using the following information sources.\n"
             f"News: {news}\n\nQuestion: {question}",
-            reasoning={"effort": "low"},
+            #reasoning={"effort": "minimal"},
         )
 
         record = {
@@ -216,7 +216,7 @@ async def llm_as_a_judge(path: str) -> str:
         for line in f:
             record = json.loads(line)
             response = await client.responses.create(
-                model="gpt-5-nano",
+                model="gpt-4.1-nano-2025-04-14",
                 input=[
                     {
                         "role": "system",
@@ -225,7 +225,7 @@ async def llm_as_a_judge(path: str) -> str:
                                 "type": "input_text",
                                 "text": (
                                     "You are an expert grader. "
-                                    "Only respond with either 'Correct' or 'Incorrect'."
+                                    "Only respond with either 'Correct' or 'Incorrect'. The answers do not need to have all context to be correct and the wording does not have to be identical to the correct answer."
                                 ),
                             }
                         ],
@@ -244,7 +244,7 @@ async def llm_as_a_judge(path: str) -> str:
                         ],
                     },
                 ],
-                reasoning={"effort": "low"},
+                #reasoning={"effort": "minimal"},
             )
             print(f"Question: {record['question']}")
             print(f"Guess: {record['ai_response']}")
