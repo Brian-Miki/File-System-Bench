@@ -126,9 +126,8 @@ def agent_openai_call() -> str:
                         }
                     )
                     research_done = True
-
-                else:
-                    counter += 1
+                
+                counter += 1
 
         input_list.append(
             {
@@ -299,6 +298,6 @@ async def individual_eval(record: dict, client: AsyncOpenAI) -> str:
     print("--------------------")
 
 
-path = asyncio.run(oneshot_openai_call())
-# path = agent_openai_call()
+#path = asyncio.run(oneshot_openai_call())
+path = agent_openai_call()
 asyncio.run(llm_as_a_judge(path))
