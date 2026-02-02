@@ -6,6 +6,7 @@ import json
 import time
 import asyncio
 from pathlib import Path
+from openai import AsyncOpenAI
 
 current_time = time.ctime()
 load_dotenv()
@@ -20,7 +21,7 @@ def agent_openai_call() -> str:
     """
 
     tools = tool_description()
-    questions= get_questions()
+    questions = get_questions()
     summaries = get_summaries()
     answers = get_answers()
     buffer = []
@@ -86,7 +87,7 @@ def agent_openai_call() -> str:
                 tools=tools,
                 tool_choice="required",
                 input=input_list,
-                #reasoning={"effort": "minimal"},
+                # reasoning={"effort": "minimal"},
             )
             input_list += response.output
             for item in response.output:
@@ -149,7 +150,7 @@ def agent_openai_call() -> str:
         response = client.responses.create(
             model="gpt-4.1-nano-2025-04-14",
             input=input_list,
-            #reasoning={"effort": "minimal"},
+            # reasoning={"effort": "minimal"},
         )
         record = {
             "question": f"{question}",
@@ -181,7 +182,7 @@ def oneshot_openai_call() -> str:
             model="gpt-4.1-nano-2025-04-14",
             input="Answer the question concisely in 1 sentences using the following information sources.\n"
             f"News: {news}\n\nQuestion: {question}",
-            #reasoning={"effort": "minimal"},
+            # reasoning={"effort": "minimal"},
         )
 
         record = {
@@ -213,47 +214,75 @@ async def llm_as_a_judge(path: str) -> str:
     client = get_async_openai_client()
     print(f"Completing scoring for: {path}")
     with open(Path(path), "r", encoding="utf-8") as f:
-        for line in f:
-            record = json.loads(line)
-            response = await client.responses.create(
-                model="gpt-4.1-nano-2025-04-14",
-                input=[
-                    {
-                        "role": "system",
-                        "content": [
-                            {
-                                "type": "input_text",
-                                "text": (
-                                    "You are an expert grader. "
-                                    "Only respond with either 'Correct' or 'Incorrect'. The answers do not need to have all context to be correct and the wording does not have to be identical to the correct answer."
-                                ),
-                            }
-                        ],
-                    },
-                    {
-                        "role": "user",
-                        "content": [
-                            {
-                                "type": "input_text",
-                                "text": (
-                                    f"<question>{record['question']}</question>\n"
-                                    f"<response>{record['ai_response']}</response>\n"
-                                    f"<correct_answer>{record['correct_answer']}</correct_answer>"
-                                ),
-                            }
-                        ],
-                    },
-                ],
-                #reasoning={"effort": "minimal"},
-            )
-            print(f"Question: {record['question']}")
-            print(f"Guess: {record['ai_response']}")
-            print(f"Answer: {record['correct_answer']}")
-            print(response.output_text)
-            print("--------------------")
+        await asyncio.gather(*(individual_eval(json.loads(line), client) for line in f))
+
     return path
 
 
-#path = oneshot_openai_call()
-path = agent_openai_call()
+async def individual_eval(record: dict, client: AsyncOpenAI) -> str:
+    """
+    Evaluate a single model response using an LLM-as-a-judge.
+
+    This function sends the question, the model-generated response, and the
+    corresponding ground-truth answer to a grading model, which returns a
+    binary judgment indicating whether the response should be considered
+    correct.
+
+    The evaluation is performed asynchronously and is intended to be used
+    as part of a larger concurrent evaluation pipeline (e.g., via
+    ``asyncio.gather``).
+
+    Args:
+        record (dict): A dictionary containing the evaluation data with the
+            following keys:
+            - ``"question"`` (str): The original question posed to the model.
+            - ``"ai_response"`` (str): The model-generated answer to evaluate.
+            - ``"correct_answer"`` (str): The reference answer used for grading.
+        client (AsyncOpenAI): An asynchronous OpenAI client instance used to
+            submit the grading request.
+
+    Returns:
+        str: A string judgment produced by the grading model, expected to be
+        either ``"Correct"`` or ``"Incorrect"``.
+    """
+    response = await client.responses.create(
+        model="gpt-4.1-nano-2025-04-14",
+        input=[
+            {
+                "role": "system",
+                "content": [
+                    {
+                        "type": "input_text",
+                        "text": (
+                            "You are an expert grader. "
+                            "Only respond with either 'Correct' or 'Incorrect'. The answers do not need to have all context to be correct and the wording does not have to be identical to the correct answer."
+                        ),
+                    }
+                ],
+            },
+            {
+                "role": "user",
+                "content": [
+                    {
+                        "type": "input_text",
+                        "text": (
+                            f"<question>{record['question']}</question>\n"
+                            f"<response>{record['ai_response']}</response>\n"
+                            f"<correct_answer>{record['correct_answer']}</correct_answer>"
+                        ),
+                    }
+                ],
+            },
+        ],
+        # reasoning={"effort": "minimal"},
+    )
+    print(f"Question: {record['question']}")
+    print(f"Guess: {record['ai_response']}")
+    print(f"Answer: {record['correct_answer']}")
+    print(response.output_text)
+    print("--------------------")
+
+
+path = oneshot_openai_call()
+# path = agent_openai_call()
 asyncio.run(llm_as_a_judge(path))
