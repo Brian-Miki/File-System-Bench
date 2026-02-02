@@ -164,7 +164,7 @@ def agent_openai_call() -> str:
     return log_path
 
 
-def oneshot_openai_call() -> str:
+async def oneshot_openai_call() -> str:
     """Answer every question in a single model call using the news digest.
 
     Returns:
@@ -173,31 +173,47 @@ def oneshot_openai_call() -> str:
     """
     questions = get_questions()
     news = get_news()
-    client = get_openai_client()
+    client = get_async_openai_client()
     answers = get_answers()
     buffer = []
+    lock = asyncio.Lock()
 
-    for i, question in enumerate(questions):
-        response = client.responses.create(
-            model="gpt-4.1-nano-2025-04-14",
-            input="Answer the question concisely in 1 sentences using the following information sources.\n"
-            f"News: {news}\n\nQuestion: {question}",
-            # reasoning={"effort": "minimal"},
+    await asyncio.gather(
+        *(
+            individual_response(news, question[i], client, answers[i], buffer, lock)
+            for i, question in enumerate(questions)
         )
-
-        record = {
-            "question": f"{question}",
-            "ai_response": f"{response.output_text}",
-            "correct_answer": f"{answers[i]}",
-        }
-
-        buffer.append(json.dumps(record, ensure_ascii=False))
+    )
     with open(
         f"logs/oneshot/logs_oneshot_{current_time}.json", "a", encoding="utf-8"
     ) as f:
         f.write("\n".join(buffer) + "\n")
 
     return f"logs/oneshot/logs_oneshot_{current_time}.json"
+
+
+async def individual_response(
+    news: list,
+    question: str,
+    client: AsyncOpenAI,
+    answer: str,
+    buffer: list,
+    lock: asyncio.Lock,
+):
+    response = await client.responses.create(
+        model="gpt-4.1-nano-2025-04-14",
+        input="Answer the question concisely in 1 sentences using the following information sources.\n"
+        f"News: {news}\n\nQuestion: {question}",
+        # reasoning={"effort": "minimal"},
+    )
+
+    record = {
+        "question": f"{question}",
+        "ai_response": f"{response.output_text}",
+        "correct_answer": f"{answer}",
+    }
+    async with lock:
+        buffer.append(json.dumps(record, ensure_ascii=False))
 
 
 async def llm_as_a_judge(path: str) -> str:
@@ -283,6 +299,6 @@ async def individual_eval(record: dict, client: AsyncOpenAI) -> str:
     print("--------------------")
 
 
-path = oneshot_openai_call()
+path = asyncio.run(oneshot_openai_call())
 # path = agent_openai_call()
 asyncio.run(llm_as_a_judge(path))
