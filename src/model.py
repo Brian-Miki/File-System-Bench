@@ -179,8 +179,10 @@ async def oneshot_openai_call() -> str:
 
     await asyncio.gather(
         *(
-            individual_response(news, question[i], client, answers[i], buffer, lock)
-            for i, question in enumerate(questions)
+            individual_response(
+                news, question_text, client, answers[i], buffer, lock
+            )
+            for i, question_text in enumerate(questions)
         )
     )
     with open(
@@ -298,6 +300,6 @@ async def individual_eval(record: dict, client: AsyncOpenAI) -> str:
     print("--------------------")
 
 
-#path = asyncio.run(oneshot_openai_call())
-path = agent_openai_call()
+path = asyncio.run(oneshot_openai_call())
+#path = agent_openai_call()
 asyncio.run(llm_as_a_judge(path))
